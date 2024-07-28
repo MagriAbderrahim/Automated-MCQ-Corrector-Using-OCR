@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Correcteur QCM</title>
+  <link rel="stylesheet" href="static\bootstrap\bootstrap.min.css">
+  <style>
+    body {
+      background-color: #fff;  
+      font-family: 'Poppins', sans-serif; /* Utilisation de la police Poppins */
+      color: #333; /* Couleur du texte principal */
+      font-size: 20px; /* Taille de police de base */
+    }
+    #reponsesForm label {
+        font-size: 1rem; /* Taille de police */
+        font-weight: bold; /* Gras */
+        color: #333; /* Couleur du texte */
+    }
+
+    /* Style pour les champs de texte */
+    #reponsesForm input[type="text"] {
+        width: 100%; /* Largeur à 100% */
+        padding: 8px; /* Rembourrage intérieur */
+        margin-bottom: 10px; /* Marge en bas */
+        border: 1px solid #ccc; /* Bordure légère */
+        border-radius: 5px; /* Coins arrondis */
+        box-sizing: border-box; /* Boîte de modélisation incluse */
+    }
+
+    /* Style pour les colonnes dans le formulaire */
+    #reponsesForm .col-md-3 {
+        margin-bottom: 15px; /* Espacement entre les colonnes */
+    }
+
+    /* Style pour les groupes de formulaire */
+    #reponsesForm .form-group {
+        margin-bottom: 15px; /* Espacement entre les groupes de formulaire */
+    }
+
+    .container {
+        max-width: 60%;
+      padding: 20px;
+      background-color: #ffffff; /* Fond du conteneur principal */
+    }
+
+    
+@font-face {
+    font-family: myfont;
+    src: url(/static/uploads/Coffee\ Fills.otf);
+}
+/* Application de la police au titre h1 */
+/* Application de la police au titre h1 */
+    h1 {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #C80036; /* Couleur du titre */
+        font-size: 3.5rem; /* Taille de police pour h1 */
+        font-family: myfont;
+        font-weight: bold;
+    }
+
+    .mt-5 {
+      margin-top: 5rem !important;
+    }
+
+    .mt-3 {
+      margin-top: 3rem !important;
+    }
+
+    .btn {
+            cursor: pointer; /* Curseur pointer pour les boutons */
+            width: 100%;
+            margin: auto; /* Largeur des boutons */
+            height: 50px; /* Hauteur des boutons */
+            font-size: 16px;
+            font-weight: bold;
+            color: #ffffff;
+            background-color: #C80036; /* Couleur de fond du bouton primaire */
+            border-color: #C80036;
+             /* Taille de la police */
+    }
+    .btn:hover {
+        color: #ffffff;
+        background-color: #FF6969;
+    }
+    .d-flex.justify-content-between {
+        align-items: center; /* Pour centrer verticalement le texte et le bouton */
+    }
+
+    #exportToPdfBtn {
+        margin-right: 5px;
+        width: 300px;
+        color: white;
+    }
+    #clearDataBtn{
+        margin-right: 5px;
+        width: 300px;
+        color: white;
+    }
+  
+    
+
+    /* Style pour la zone d'image */
+    #imageZone {
+        min-height: 400px; /* Hauteur minimale pour la zone d'image */
+        border: 2px dashed #ddd; /* Bordure en pointillés */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f5f5f5; /* Fond gris clair */
+        background-image: url('/static/uploads/upload.png'); /* Image d'upload */
+        background-size: 150px; /* Assurez-vous que l'image couvre la zone */
+        background-position: center; /* Centrage de l'image */
+        background-repeat: no-repeat; /* Ne pas répéter l'image */
+        margin-bottom: 20px;
+    }
+    
+
+    /* Style pour le tableau des données */
+    .table {
+      width: 100%;
+      
+      background-color: #ffffff; /* Fond blanc */
+      border: 1px solid #ddd; /* Bordure légère */
+      border-collapse: collapse; /* Fusionner les bordures de cellules */
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.05); /* Ombre légère */
+    }
+    .table-container {
+            max-height: 200px; /* Ajustez la hauteur en fonction de la hauteur de chaque ligne pour montrer 5 lignes */
+            overflow-y: auto;
+        }
+
+    .table th, .table td {
+      padding: 10px;
+      text-align: center;
+      border: 1px solid #ddd; /* Bordure légère pour chaque cellule */
+    }
+    
+    .modal-content {
+        border-radius: 10px; /* Coins arrondis */
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* Ombre légère */
+        width: 1200px; /* Largeur fixe du modal */
+        margin: auto; /* Centrer horizontalement */
+        position: relative; /* Position relative pour le centrage */
+        left: 50%; /* Déplacement de 50% vers la droite */
+        transform: translateX(-50%); /* Correction du centrage avec translate */
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+
+    .modal-title {
+        font-size: 1.8rem; /* Taille de police pour le titre du modal légèrement réduite */
+        font-weight: bold;
+        color: #333; /* Couleur du titre du modal */
+    }
+
+    .modal-footer {
+        border-top: 1px solid #ddd; /* Bordure légère en haut du pied de page du modal */
+        padding-top: 10px;
+    }
+
+    .modal-footer .btn {
+        margin-top: 20px;
+        min-width: 100px; /* Largeur minimale des boutons */
+    }
+
+    .modal-footer .btn-primary {
+        background-color: #007bff; /* Couleur de fond du bouton Enregistrer */
+        border-color: #007bff; /* Couleur de bordure du bouton Enregistrer */
+    }
+
+    .modal-footer .btn-primary:hover {
+        background-color: #0056b3; /* Couleur de fond du bouton Enregistrer au survol */
+        border-color: #0056b3; /* Couleur de bordure du bouton Enregistrer au survol */
+        color: #fff; /* Couleur du texte au survol */
+    }
+    .imglogo {
+        width: 150px;
+        height: 150px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .spacer{
+        height: 200px;
+    }
+  
+    
+
+  </style>
+</head>
+<body>
+  <div class="container ">
+    <h1 class="mt-5 ">CORRECTEUR QCM</h1>
+    <img class="imglogo" src="static/uploads/qcmlogo.png" alt="Feuille Reponse">
+
+    
+    <!-- Zone d'image -->
+    <div class="row mt-5">
+      <div class="col">
+        <h4 class="h5">Affichage Feuille Reponse</h4>
+        <div id="imageZone" class="border p-3">
+          <!-- L'image sera affichée ici -->
+        </div>
+      </div>
+    </div>
+    
+    <!-- Boutons -->
+    <div class="container mt-3">
+        <div class="row">
+          <div class="col d-flex justify-content-center flex-column">
+            <button id="chargerImageBtn" class="btn  mb-2">Charger Image</button>
+            <button id="corrigerFeuilleBtn" class="btn  mb-2">Corriger Feuille</button>
+            <button id="saisirReponsesBtn" class="btn ">Saisir Réponses Correctes</button>
+          </div>
+        </div>
+      </div>
+      
+    
+    <!-- Tableau pour les données -->
+    <div class="row mt-5">
+        <div class="col">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="h4 m-0">Tableau des données</h4>
+                <div class="d-flex">
+                    <button class="btn" id="exportToPdfBtn">Exporter vers PDF</button>
+                    <button class="btn" id="clearDataBtn">Vider les données</button>
+                </div>
+            </div>
+            <div class="table-container">
+                <table id="tableToExport" class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="text-center h5">Nom</th>
+                            <th scope="col" class="text-center h5">Prénom</th>
+                            <th scope="col" class="text-center h5">Note</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Les données seront affichées ici -->
+                    </tbody>
+                </table>
+            </div>
+            
+        </div>
+    </div>
+    <div class="spacer"></div>
+
+   
+    
+
+  <!-- Modal pour saisir les réponses -->
+  <div class="modal fade" id="saisirReponsesModal" tabindex="-1" role="dialog" aria-labelledby="saisirReponsesModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="saisirReponsesModalLabel">Saisir Réponses Correctes</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="modalBody">
+    <div class="container-fluid">
+        <form id="reponsesForm">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="reponse1">Réponse 1</label>
+                        <input type="text" class="form-control" id="reponse1" required>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="reponse2">Réponse 2</label>
+                        <input type="text" class="form-control" id="reponse2" required>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="reponse3">Réponse 3</label>
+                        <input type="text" class="form-control" id="reponse3" required>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="reponse4">Réponse 4</label>
+                        <input type="text" class="form-control" id="reponse4" required>
+                    </div>
+                </div>
+            </div>
+            <!-- Repeat for the remaining inputs -->
+            <div class="row">
+                <!-- Example for inputs 5-8 -->
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="reponse5">Réponse 5</label>
+                        <input type="text" class="form-control" id="reponse5" required>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="reponse6">Réponse 6</label>
+                        <input type="text" class="form-control" id="reponse6" required>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="reponse7">Réponse 7</label>
+                        <input type="text" class="form-control" id="reponse7" required>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="reponse8">Réponse 8</label>
+                        <input type="text" class="form-control" id="reponse8" required>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <!-- Example for inputs 5-8 -->
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="reponse9">Réponse 9</label>
+                        <input type="text" class="form-control" id="reponse9" required>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="reponse11">Réponse 10</label>
+                        <input type="text" class="form-control" id="reponse11" required>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="reponse7">Réponse 11</label>
+                        <input type="text" class="form-control" id="reponse7" required>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="reponse12">Réponse 12</label>
+                        <input type="text" class="form-control" id="reponse12" required>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <!-- Example for inputs 5-8 -->
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="reponse13">Réponse 13</label>
+                        <input type="text" class="form-control" id="reponse13" required>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="reponse14">Réponse 14</label>
+                        <input type="text" class="form-control" id="reponse14" required>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="reponse15">Réponse 15</label>
+                        <input type="text" class="form-control" id="reponse15" required>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="reponse16">Réponse 16</label>
+                        <input type="text" class="form-control" id="reponse16" required>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <!-- Example for inputs 5-8 -->
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="reponse17">Réponse 17</label>
+                        <input type="text" class="form-control" id="reponse17" required>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="reponse18">Réponse 18</label>
+                        <input type="text" class="form-control" id="reponse18" required>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="reponse19">Réponse 19</label>
+                        <input type="text" class="form-control" id="reponse19" required>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="reponse20">Réponse 20</label>
+                        <input type="text" class="form-control" id="reponse20" required>
+                    </div>
+                </div>
+            </div>
+            <!-- Repeat rows for inputs 9-12, 13-16, and 17-20 -->
+            <!-- Adjust the number in each row to maintain a 5x4 grid -->
+        </form>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+    <button type="button" class="btn btn-primary" id="saveAnswersBtn">Enregistrer</button>
+</div>
+
+
+      </div>
+    </div>
+  </div>
+
+  <script src="static\js\jquery-3.5.1.slim.min.js"></script>
+  <script src="static\js\jspdf.debug.js"></script>
+
+  <script src="static\js\sweetalert2@11.js"></script>
+  <script src="static\js\jspdf.umd.min.js"></script>
+  <script src="static\js\popper.min.js"></script>
+  <script src="static\bootstrap\bootstrap.min.js"></script>
+  <script>
+     document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('clearDataBtn').addEventListener('click', function() {
+            Swal.fire({
+                title: 'Êtes-vous sûr(e) de vouloir vider les données ?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Oui, vider les données',
+                cancelButtonText: 'Annuler'
+            }).then(function(result) {
+                if (result.isConfirmed) {
+                    fetch('/viderTableEtudiants', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Vider le contenu visuel (tableBody)
+                            document.getElementById('tableBody').innerHTML = '';
+
+                            // Afficher un message de confirmation
+                            Swal.fire({
+                                title: 'Suppression réussie !',
+                                text: data.message,
+                                icon: 'success'
+                            });
+                        } else {
+                            // Afficher une alerte en cas d'erreur
+                            Swal.fire({
+                                title: 'Erreur',
+                                text: data.message,
+                                icon: 'error'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        Swal.fire({
+                            title: 'Erreur',
+                            text: 'Une erreur est survenue lors de la suppression des données.',
+                            icon: 'error'
+                        });
+                        console.error('Erreur lors de la requête fetch:', error);
+                    });
+                }
+            });
+        });
+    });
+
+
+    // Fonction pour récupérer les données des étudiants depuis Flask
+    function fetchStudents() {
+    fetch('/gets_students')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('La réponse du serveur n\'est pas OK.');
+            }
+            return response.json();
+        })
+        .then(data => {
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = ''; // Vide le contenu précédent de la table
+
+            data.forEach(student => {
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td class="text-center h5">${student.nom}</td>
+                    <td class="text-center h5">${student.prenom}</td>
+                    <td class="text-center h5">${student.score}</td>
+                `;
+                tableBody.appendChild(newRow);
+            });
+        })
+        .catch(error => {
+            console.error('Erreur lors de la récupération des étudiants:', error);
+        });
+}
+
+// Appeler fetchStudents() au chargement de la page
+document.addEventListener('DOMContentLoaded', fetchStudents);
+
+
+document.getElementById('chargerImageBtn').addEventListener('click', function() {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+
+      input.addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+          const formData = new FormData();
+          formData.append('image', file);
+
+          fetch('/upload', {
+            method: 'POST',
+            body: formData,
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              const imageZone = document.getElementById('imageZone');
+              const img = document.createElement('img');
+              img.src = `/static/uploads/qcm/${data.filename}`;
+              img.classList.add('img-fluid');
+              imageZone.innerHTML = '';
+              imageZone.appendChild(img);
+            } else {
+              alert('Erreur lors du téléchargement de l\'image.');
+            }
+          })
+          .catch(error => {
+            console.error('Erreur:', error);
+            alert('Erreur lors du téléchargement de l\'image.');
+          });
+        }
+      });
+
+      input.click();
+    });
+   
+     // Sélectionnez le bouton "Enregistrer" du modal
+    // Sélectionner le bouton "Saisir Réponses"
+document.getElementById('saisirReponsesBtn').addEventListener('click', function() {
+    $('#saisirReponsesModal').modal('show'); // Afficher le modal
+});
+
+// Sélectionner le bouton "Enregistrer" du modal
+var saveAnswersBtn = document.getElementById('saveAnswersBtn');
+
+// Ajouter un événement de clic au bouton "Enregistrer"
+saveAnswersBtn.addEventListener('click', function() {
+    
+    // Sélectionner tous les inputs de réponse à l'intérieur du formulaire #reponsesForm
+    var reponsesInputs = document.querySelectorAll('#reponsesForm input[type="text"]');
+
+    var allFilled = true;
+    var reponses = [];
+
+    // Parcourir tous les inputs de réponse pour vérifier s'ils sont tous remplis et récupérer leurs valeurs
+    reponsesInputs.forEach(function(input) {
+        if (input.value.trim() === '') {
+            allFilled = false;
+        }
+        reponses.push(input.value.trim());
+    });
+
+    // Si tous les champs sont remplis, traiter les réponses
+    if (allFilled) {
+        // Envoi des données au backend via une requête fetch POST
+        fetch('/save_correct_answers', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ reponses: reponses }),
+        })
+        .then(function(response) {
+            if (response.ok) {
+                return response.json();
+            }
+            throw new Error('Erreur lors de l\'enregistrement des réponses.');
+        })
+        .then(function(data) {
+            Swal.fire({
+                title: 'Succès!',
+                text: 'Réponses enregistrées avec succès!',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            });
+            $('#saisirReponsesModal').modal('hide');
+        })
+        .catch(function(error) {
+            alert('Erreur : ' + error.message);
+        });
+    } else {
+        // Afficher une alerte si tous les champs ne sont pas remplis
+        alert('Veuillez remplir tous les champs de réponse.');
+    }
+});
+document.getElementById('corrigerFeuilleBtn').addEventListener('click', function() {
+    // Afficher le modal de chargement
+    Swal.fire({
+        title: 'Traitement en cours...',
+        html: 'Veuillez patienter',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+
+    // Vérifier si une image est chargée dans la zone d'image
+    var imageZone = document.getElementById('imageZone');
+    if (imageZone.children.length === 0) {
+        Swal.close(); // Fermer le modal de chargement
+        Swal.fire('Erreur', "Veuillez d'abord charger une feuille de réponse.", 'error');
+        return;
+    }
+
+    // Récupérer le dernier fichier image téléchargé
+    fetch('/get_latest_qcm_file')
+        .then(response => response.json())
+        .then(data => {
+            if (data.filepath) {
+                // Envoyer le chemin de l'image à Flask pour traitement
+                fetch('/process_qcm', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ image_path: data.filepath })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        var infosEtudiant = data.infos_etudiant.join(', ');
+                        var reponsesEtudiant = data.reponses_etudiant.join(', ');
+                        var score = data.score;
+
+                        // Extract the student's name and surname
+                        var nom = data.infos_etudiant.find(info => info.startsWith('Nom')).split(': ')[1];
+                        var prenom = data.infos_etudiant.find(info => info.startsWith('Prenom')).split(': ')[1];
+
+                        // Fermer le modal de chargement
+                        Swal.close();
+
+                        // Afficher l'alerte après le traitement
+                        Swal.fire('Succès', `Feuille de réponses de ${nom} ${prenom} a été correctement corrigée.`, 'success');
+
+                        // Ajouter les données à la table (exemple)
+                        var tableBody = document.getElementById('tableBody');
+                        var newRow = document.createElement('tr');
+                        newRow.innerHTML = `
+                            <td>${nom}</td>
+                            <td>${prenom}</td>
+                            <td>${score}</td>
+                        `;
+                        tableBody.appendChild(newRow);
+                    } else {
+                        Swal.close(); // Fermer le modal de chargement
+                        Swal.fire('Erreur', "Erreur lors du traitement de l'image.", 'error');
+                    }
+                })
+                .catch(error => {
+                    Swal.close(); // Fermer le modal de chargement
+                    console.error('Erreur:', error);
+                    Swal.fire('Erreur', 'Une erreur est survenue lors du traitement.', 'error');
+                });
+            } else {
+                Swal.close(); // Fermer le modal de chargement
+                Swal.fire('Erreur', "Aucun fichier QCM trouvé.", 'error');
+            }
+        })
+        .catch(error => {
+            Swal.close(); // Fermer le modal de chargement
+            console.error('Erreur:', error);
+            Swal.fire('Erreur', 'Une erreur est survenue lors du traitement.', 'error');
+        });
+});
+
+const exportToPdfBtn = document.getElementById('exportToPdfBtn');
+const tableToExport = document.getElementById('tableToExport');
+
+  exportToPdfBtn.addEventListener('click', () => {
+    const pdf = new jsPDF();
+    const tableHtml = tableToExport.outerHTML;
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
+
+    pdf.fromHTML(tableHtml, 10, 10, {
+      'width': pdfWidth,
+      'elementHandlers': specialElementHandlers
+    });
+
+    const pdfName = 'Notes.pdf';
+    pdf.save(pdfName);
+  });
+
+  const specialElementHandlers = {
+    '#bypassme': function(element, renderer) {
+      return true;
+    }
+  };
+
+
+
+
+  // Fonction pour récupérer les données des étudiants depuis Flask
+
+
+  </script>
+
+
+</body>
+
+</html>
